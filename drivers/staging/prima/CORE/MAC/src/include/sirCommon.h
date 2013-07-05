@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -36,11 +36,7 @@
 
 #include "sirApi.h"
 #include "sirParams.h"
-#include "sirWrapper.h"
-
-#ifndef NULL
-#define NULL TX_NULL
-#endif
+#include "VossWrapper.h"
 
 /* ********************************************* *
  *                                               *

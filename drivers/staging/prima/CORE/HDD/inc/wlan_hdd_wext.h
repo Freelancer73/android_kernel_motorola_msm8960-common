@@ -1,4 +1,24 @@
 /*
+ * Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
+ *
+ * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
+ *
+ *
+ * Permission to use, copy, modify, and/or distribute this software for
+ * any purpose with or without fee is hereby granted, provided that the
+ * above copyright notice and this permission notice appear in all
+ * copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+ * WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+ * AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+ * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+ * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+ * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
+/*
  * Copyright (c) 2012, The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
@@ -49,7 +69,17 @@
 #define HDD_WLAN_WMM_PARAM_SUSPENSION_INTERVAL         13
 #define HDD_WLAN_WMM_PARAM_BURST_SIZE_DEFN             14
 #define HDD_WLAN_WMM_PARAM_ACK_POLICY                  15
-#define HDD_WLAN_WMM_PARAM_COUNT                       16
+#define HDD_WLAN_WMM_PARAM_INACTIVITY_INTERVAL         16
+#define HDD_WLAN_WMM_PARAM_MAX_SERVICE_INTERVAL        17
+#define HDD_WLAN_WMM_PARAM_COUNT                       18
+
+#define MHZ 6
+
+#define WE_MAX_STR_LEN                                 1024
+#define WLAN_HDD_UI_BAND_AUTO                          0
+#define WLAN_HDD_UI_BAND_5_GHZ                         1
+#define WLAN_HDD_UI_BAND_2_4_GHZ                       2
+#define WLAN_HDD_UI_SET_BAND_VALUE_OFFSET              8
 
 typedef enum
 {
@@ -171,7 +201,6 @@ typedef enum
 
 #define HDD_WPA_ELEM_VENDOR_EXTENSION       0x1049
 
-#ifdef WLAN_SOFTAP_FEATURE
 #define HDD_WPS_MANUFACTURER_LEN            64
 #define HDD_WPS_MODEL_NAME_LEN              32
 #define HDD_WPS_MODEL_NUM_LEN               32
@@ -189,16 +218,20 @@ typedef enum
 #define HDD_WPS_ELEM_SERIAL_NUM             0x1042 
 #define HDD_WPS_ELEM_DEVICE_NAME            0x1011
 #define HDD_WPS_ELEM_REGISTRA_CONF_METHODS  0x1053
-#endif
+
 
 
 #define WPS_OUI_TYPE   "\x00\x50\xf2\x04"
 #define WPS_OUI_TYPE_SIZE  4
- 
-#ifdef WLAN_FEATURE_P2P
+
+#define SS_OUI_TYPE    "\x00\x16\x32"
+#define SS_OUI_TYPE_SIZE   3
+
 #define P2P_OUI_TYPE   "\x50\x6f\x9a\x09"
 #define P2P_OUI_TYPE_SIZE  4
-#endif
+
+#define HS20_OUI_TYPE   "\x50\x6f\x9a\x10"
+#define HS20_OUI_TYPE_SIZE  4
 
 #ifdef WLAN_FEATURE_WFD
 #define WFD_OUI_TYPE   "\x50\x6f\x9a\x0a"
@@ -273,6 +306,12 @@ typedef struct hdd_wext_state_s
    /* oem data req ID */
    v_U32_t oemDataReqID;
 #endif
+
+#ifdef FEATURE_WLAN_CCX
+   /* CCX state variables */
+   v_BOOL_t isCCXConnection;
+   eCsrAuthType collectedAuthType; /* Collected from ALL SIOCSIWAUTH Ioctls. Will be negotiatedAuthType - in tCsrProfile */
+#endif
 }hdd_wext_state_t;
 
 typedef struct ccp_freq_chan_map_s{
@@ -284,10 +323,8 @@ typedef struct ccp_freq_chan_map_s{
 #define wlan_hdd_get_wps_ie_ptr(ie, ie_len) \
     wlan_hdd_get_vendor_oui_ie_ptr(WPS_OUI_TYPE, WPS_OUI_TYPE_SIZE, ie, ie_len)
 
-#ifdef WLAN_FEATURE_P2P
 #define wlan_hdd_get_p2p_ie_ptr(ie, ie_len) \
     wlan_hdd_get_vendor_oui_ie_ptr(P2P_OUI_TYPE, P2P_OUI_TYPE_SIZE, ie, ie_len)
-#endif
 
 #ifdef WLAN_FEATURE_WFD
 #define wlan_hdd_get_wfd_ie_ptr(ie, ie_len) \
@@ -301,10 +338,8 @@ extern int hdd_wlan_get_rts_threshold(hdd_adapter_t *pAdapter,
                                       union iwreq_data *wrqu);
 extern int hdd_wlan_get_frag_threshold(hdd_adapter_t *pAdapter,
                                       union iwreq_data *wrqu);
-#ifndef FEATURE_WLAN_INTEGRATED_SOC
-extern int hdd_wlan_get_version(hdd_adapter_t *pAdapter,
-                                union iwreq_data *wrqu, char *extra);
-#endif
+extern void hdd_wlan_get_version(hdd_adapter_t *pAdapter,
+                                 union iwreq_data *wrqu, char *extra);
 
 extern int iw_get_scan(struct net_device *dev, 
                        struct iw_request_info *info,
@@ -374,7 +409,19 @@ VOS_STATUS wlan_hdd_enter_lowpower(hdd_context_t *pHddCtx);
 
 VOS_STATUS wlan_hdd_get_classAstats(hdd_adapter_t *pAdapter);
 
+VOS_STATUS wlan_hdd_get_station_stats(hdd_adapter_t *pAdapter);
+
 VOS_STATUS wlan_hdd_get_rssi(hdd_adapter_t *pAdapter, v_S7_t *rssi_value);
+#ifdef FEATURE_WLAN_TDLS
+VOS_STATUS iw_set_tdls_params(struct net_device *dev, struct iw_request_info *info, union iwreq_data *wrqu, char *extra, int nOffset);
+#endif
+#if defined WLAN_FEATURE_VOWIFI_11R || defined FEATURE_WLAN_CCX || defined(FEATURE_WLAN_LFR)
+VOS_STATUS wlan_hdd_get_roam_rssi(hdd_adapter_t *pAdapter, v_S7_t *rssi_value);
+#endif
+
+#ifdef WLAN_FEATURE_PACKET_FILTERING
+void wlan_hdd_set_mc_addr_list(hdd_adapter_t *pAdapter, v_U8_t set);
+#endif
 
 #endif // __WEXT_IW_H__
 
