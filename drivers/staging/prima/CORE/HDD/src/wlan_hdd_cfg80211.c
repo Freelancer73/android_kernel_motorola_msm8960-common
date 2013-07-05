@@ -837,7 +837,7 @@ void wlan_hdd_cfg80211_set_key_wapi(hdd_adapter_t* pAdapter, u8 key_index,
 }
 #endif /* FEATURE_WLAN_WAPI*/
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0))
 int wlan_hdd_cfg80211_alloc_new_beacon(hdd_adapter_t *pAdapter,
                                        beacon_data_t **ppBeacon,
                                        struct beacon_parameters *params)
@@ -888,7 +888,7 @@ int wlan_hdd_cfg80211_alloc_new_beacon(hdd_adapter_t *pAdapter,
     if( beacon == NULL )
         return -ENOMEM;
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0))
     if(params->dtim_period || !old )
         beacon->dtim_period = params->dtim_period;
     else
@@ -1074,7 +1074,7 @@ static int wlan_hdd_add_ie(hdd_adapter_t* pHostapdAdapter, v_U8_t *genie,
     return 0;
 }
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0))
 static int wlan_hdd_cfg80211_update_apies(hdd_adapter_t* pHostapdAdapter,
                             struct beacon_parameters *params)
 #else
@@ -1614,7 +1614,7 @@ VOS_STATUS wlan_sap_select_cbmode(void *pAdapter,eSapPhyMode SapHw_mode, v_U8_t 
     return VOS_STATUS_SUCCESS;
 }
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0))
 static int wlan_hdd_cfg80211_start_bss(hdd_adapter_t *pHostapdAdapter,
                             struct beacon_parameters *params)
 #else
@@ -1834,7 +1834,7 @@ static int wlan_hdd_cfg80211_start_bss(hdd_adapter_t *pHostapdAdapter,
 
     pConfig->SSIDinfo.ssidHidden = VOS_FALSE;
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0))
     if (params->ssid != NULL)
     {
         memcpy(pConfig->SSIDinfo.ssid.ssId, params->ssid, params->ssid_len);
@@ -2018,7 +2018,7 @@ static int wlan_hdd_cfg80211_start_bss(hdd_adapter_t *pHostapdAdapter,
    return 0;
 }
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0))
 static int wlan_hdd_cfg80211_add_beacon(struct wiphy *wiphy,
                                         struct net_device *dev,
                                         struct beacon_parameters *params)
@@ -2113,9 +2113,9 @@ static int wlan_hdd_cfg80211_set_beacon(struct wiphy *wiphy,
     return status;
 }
 
-#endif //(LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
+#endif //(LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0))
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0))
 static int wlan_hdd_cfg80211_del_beacon(struct wiphy *wiphy,
                                         struct net_device *dev)
 #else
@@ -2269,7 +2269,7 @@ static int wlan_hdd_cfg80211_stop_ap (struct wiphy *wiphy,
     return status;
 }
 
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(3,3,0))
+#if (LINUX_VERSION_CODE > KERNEL_VERSION(3,0,0))
 
 static int wlan_hdd_cfg80211_start_ap(struct wiphy *wiphy,
                                       struct net_device *dev,
@@ -2405,7 +2405,7 @@ static int wlan_hdd_cfg80211_change_beacon(struct wiphy *wiphy,
     return status;
 }
 
-#endif //(LINUX_VERSION_CODE > KERNEL_VERSION(3,3,0))
+#endif //(LINUX_VERSION_CODE > KERNEL_VERSION(3,0,0))
 
 
 static int wlan_hdd_cfg80211_change_bss (struct wiphy *wiphy,
@@ -7659,7 +7659,7 @@ static struct cfg80211_ops wlan_hdd_cfg80211_ops =
     .del_virtual_intf = wlan_hdd_del_virtual_intf,
     .change_virtual_intf = wlan_hdd_cfg80211_change_iface,
     .change_station = wlan_hdd_change_station,
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,4,0))
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0))
     .add_beacon = wlan_hdd_cfg80211_add_beacon,
     .del_beacon = wlan_hdd_cfg80211_del_beacon,
     .set_beacon = wlan_hdd_cfg80211_set_beacon,
