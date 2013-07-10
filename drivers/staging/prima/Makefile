@@ -1,6 +1,24 @@
 MODNAME := wlan
 WLAN_ROOT := drivers/staging/prima
 
+# These are configurable via Kconfig for kernel-based builds
+# Need to explicitly configure for Android-based builds
+
+#Flag to enable BlueTooth AMP feature
+CONFIG_PRIMA_WLAN_BTAMP := n
+
+#Flag to enable Legacy Fast Roaming(LFR)
+CONFIG_PRIMA_WLAN_LFR := y
+
+#JB kernel has PMKSA patches, hence enabling this flag
+CONFIG_PRIMA_WLAN_OKC := y
+
+# JB kernel has CPU enablement patches, so enable
+CONFIG_PRIMA_WLAN_11AC_HIGH_TP := y
+
+#Flag to enable TDLS feature
+CONFIG_QCOM_TDLS := y
+
 # Feature flags which are not (currently) configurable via Kconfig
 
 #Whether to build debug version
@@ -477,9 +495,9 @@ CDEFINES :=	-DANI_BUS_TYPE_PLATFORM=1 \
 		-DWLAN_ENABLE_AGEIE_ON_SCAN_RESULTS \
 		-DWLANTL_DEBUG\
 		-DWLAN_ACTIVEMODE_OFFLOAD_FEATURE \
-        	-DWLAN_FEATURE_HOLD_RX_WAKELOCK \
+		-DWLAN_FEATURE_HOLD_RX_WAKELOCK \
 		-DWLAN_SOFTAP_VSTA_FEATURE \
-                -DWLAN_FEATURE_ROAM_SCAN_OFFLOAD
+		-DWLAN_FEATURE_ROAM_SCAN_OFFLOAD
 
 ifneq ($(CONFIG_PRONTO_WLAN),)
 CDEFINES += -DWCN_PRONTO
@@ -576,14 +594,6 @@ endif
 
 ifeq ($(RE_ENABLE_WIFI_ON_WDI_TIMEOUT),1)
 CDEFINES += -DWDI_RE_ENABLE_WIFI_ON_WDI_TIMEOUT
-endif
-
-ifeq ($(KERNEL_BUILD),1)
-CDEFINES += -DWLAN_OPEN_SOURCE
-endif
-
-ifeq ($(findstring opensource, $(WLAN_ROOT)), opensource)
-CDEFINES += -DWLAN_OPEN_SOURCE
 endif
 
 # Fix build for GCC 4.7
