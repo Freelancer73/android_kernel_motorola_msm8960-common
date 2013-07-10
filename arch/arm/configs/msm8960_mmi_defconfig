@@ -1,6 +1,6 @@
 #
 # Automatically generated make config: don't edit
-# Linux/arm 3.0.83 Kernel Configuration
+# Linux/arm 3.0.85 Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -2410,6 +2410,7 @@ CONFIG_SND_JACK=y
 # CONFIG_SND_PCM_OSS is not set
 # CONFIG_SND_HRTIMER is not set
 CONFIG_SND_DYNAMIC_MINORS=y
+# CONFIG_SND_COMPRESS_OFFLOAD is not set
 CONFIG_SND_SUPPORT_OLD_API=y
 CONFIG_SND_VERBOSE_PROCFS=y
 # CONFIG_SND_VERBOSE_PRINTK is not set
@@ -2966,6 +2967,10 @@ CONFIG_MACH_NO_WESTBRIDGE=y
 #
 CONFIG_PRIMA_WLAN=m
 # CONFIG_PRIMA_WLAN_BTAMP is not set
+CONFIG_PRIMA_WLAN_LFR=y
+CONFIG_PRIMA_WLAN_OKC=y
+CONFIG_PRIMA_WLAN_11AC_HIGH_TP=y
+# CONFIG_QCOM_VOWIFI_11R is not set
 
 #
 # Qualcomm MSM specific device drivers
